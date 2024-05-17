@@ -9,7 +9,7 @@ app.get(basepath + '/', (req, res) => {
     if (error) {
       res.status(502).json({
         status: false,
-        response: error
+        message: error.message
       });
       return;
     }
@@ -17,22 +17,42 @@ app.get(basepath + '/', (req, res) => {
     if (results == undefined) {
     res.json({
         status: true,
-        response: []
+        responses: []
       });
       return;
     }
 
     res.json({
         status: true,
-        response: results
+        responses: results
       });
 
   });
 });
 app.get(basepath + '/:noteId', (req, res) => {
+  connection.query('SELECT * from addNote WHERE noteId=? LIMIT 1', [ req.params.noteId ], function (error, results, fields) {
+    if (error) {
+      res.status(502).json({
+        status: false,
+        message: error.message
+      });
+      return;
+    }
+
+    if (results == undefined) {
     res.json({
-        status: true
-    })
+        status: true,
+        response: null
+      });
+      return;
+    }
+
+    res.json({
+        status: true,
+        response: results.length > 0 ? results[0] : null
+      });
+
+  });
 })
 app.post(basepath + '/', (req, res) => {
     res.json({

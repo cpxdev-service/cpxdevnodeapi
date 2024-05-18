@@ -15,7 +15,7 @@ app.get(basepath + '/', (req, res) => {
     }
 
     if (results == undefined) {
-    res.json({
+      res.json({
         status: true,
         responses: []
       });
@@ -40,7 +40,7 @@ app.get(basepath + '/:noteId', (req, res) => {
     }
 
     if (results == undefined) {
-    res.json({
+      res.json({
         status: true,
         response: null
       });
@@ -55,6 +55,15 @@ app.get(basepath + '/:noteId', (req, res) => {
   });
 })
 app.post(basepath + '/', (req, res) => {
+    const body = req.body;
+    try {
+      JSON.parse(body);
+    } catch(e) {
+      res.status(403).json({
+        status: false,
+        message: 'Request body should be in JSON format.'
+    })
+    }
     res.json({
         status: true
     })

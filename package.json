@@ -5,8 +5,8 @@
   "main": "root.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --env-file=.env root.js",
-    "dev": "nodemon --env-file=.env root.js"
+    "start": "node root.js",
+    "dev": "nodemon root.js"
   },
   "keywords": [],
   "author": "",

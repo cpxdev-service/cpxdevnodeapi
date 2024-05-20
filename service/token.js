@@ -11,12 +11,16 @@ function valid(req) {
   if (!token) {
     return false;
   }
-  //Decoding the token
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  if (Math.floor(Date.now() / 1000) > decodedToken.exp) {
+  try {
+    //Decoding the token
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    if (Math.floor(new Date().getTime() / 1000) > decodedToken.exp) {
+      return false;
+    }
+    return true;
+  } catch (ex){
     return false;
   }
-  return true;
 }
 
 module.exports = {

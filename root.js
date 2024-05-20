@@ -7,6 +7,7 @@ dotenv.config();
 
 const Auth = require("./controller/auth");
 const MyNote = require("./controller/mynote");
+const MyKeep = require("./controller/mykeep");
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 15 minutes
@@ -32,6 +33,7 @@ app.post("/status", (req, res) => {
 
 app.use("/auth", Auth);
 app.use("/mynote", MyNote);
+app.use("/mykeep", MyKeep);
 
 app.listen(process.env.PORT || process.env.PORT, () => {
   console.log("Start server at port " + process.env.PORT + ".");

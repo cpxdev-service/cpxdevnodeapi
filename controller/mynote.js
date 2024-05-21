@@ -277,17 +277,27 @@ app.delete("/", exjson, (req, res) => {
           return;
         }
 
-        if (results.affectedRows > 0) {
-          res.status(204).json({
+        if (results.affectedRows == req.body.length) {
+          res.json({
             status: true,
-            noteId: req.params.noteId,
+            allNoteId: req.body,
           });
-        } else {
-          res.status(403).json({
+          return;
+        } else if (
+          results.affectedRows > 0 &&
+          results.affectedRows < req.body.length
+        ) {
+          res.json({
             status: false,
-            message: "Data is already or not found",
+            message:
+              "Delete successfully. But some record is cannot be deleted.",
           });
+          return;
         }
+        res.json({
+          status: false,
+          message: "Record already deleted.",
+        });
       }
     );
   } catch (ex) {

@@ -11,7 +11,7 @@ app.post("/token", (req, res) => {
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
   let data = {
     time: Date(),
-    // ip: request.socket.remoteAddress,
+    ip: req.connection.localAddress,
     host: os.hostname(),
     userId: v4(),
   };

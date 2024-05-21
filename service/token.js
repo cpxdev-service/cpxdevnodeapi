@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const os = require("os");
 
 function valid(req) {
   if (req.headers.authorization == undefined) {
@@ -14,6 +15,9 @@ function valid(req) {
   try {
     //Decoding the token
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    if (decodedToken.host != os.hostname()) {
+      return false;
+    }
     if (Math.floor(new Date().getTime() / 1000) > decodedToken.exp) {
       return false;
     }

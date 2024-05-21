@@ -4,20 +4,26 @@ const express = require("express");
 const app = Router();
 const jwt = require("jsonwebtoken");
 const os = require("os");
+var md5 = require('md5');
 
 const exjson = express.json();
 
 app.post("/token", (req, res) => {
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
-  let data = {
+  let checksum = {
     time: Date(),
-    ip: req.connection.remoteAddress,
     host: os.hostname(),
     userId: v4(),
   };
+  let data = {
+    time: checksum.time,
+    host: checksum.host,
+    userId: checksum.userId,
+    checksum: md5(JSON.stringify(checksum))
+  };
 
   const token = jwt.sign(data, jwtSecretKey, {
-    expiresIn: "30m",
+    expiresIn: "30m"
   });
 
   res.json({

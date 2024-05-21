@@ -22,7 +22,9 @@ app.get("/", async (req, res) => {
     client.connect();
     const database = client.db("nodejsdemo");
     const movies = database.collection("notedemo");
-    const response = await movies.find({}, {projection:{ _id: 0 }}).toArray();
+    const response = await movies
+      .find({}, { projection: { _id: 0 } })
+      .toArray();
     client.close();
     res.json({
       status: true,
@@ -50,7 +52,10 @@ app.get("/:noteId", async (req, res) => {
     client.connect();
     const database = client.db("nodejsdemo");
     const movies = database.collection("notedemo");
-    const response = await movies.findOne({noteId: req.params.noteId}, {projection:{ _id: 0 }});
+    const response = await movies.findOne(
+      { noteId: req.params.noteId },
+      { projection: { _id: 0 } }
+    );
     client.close();
     res.json({
       status: true,
@@ -96,15 +101,14 @@ app.post("/", exjson, async (req, res) => {
     client.connect();
     const database = client.db("nodejsdemo");
     const movies = database.collection("notedemo");
-    const response = await movies.insertOne({
+    await movies.insertOne({
       noteId: nid,
-      noteHeader: body.noteheader, 
+      noteHeader: body.noteheader,
       noteDesc: body.notedesc,
       noteCreated: new Date(),
-      noteUpdated: new Date()
+      noteUpdated: new Date(),
     });
     client.close();
-    response.
     res.json({
       status: true,
       noteId: nid,
@@ -148,16 +152,27 @@ app.put("/:noteId", exjson, async (req, res) => {
     client.connect();
     const database = client.db("nodejsdemo");
     const movies = database.collection("notedemo");
-    const response = await movies.updateOne({noteId: req.params.noteId}, {
-      noteHeader: body.noteheader, 
-      noteDesc: body.notedesc,
-      noteUpdated: new Date()
-    });
+    const response = await movies.updateOne(
+      { noteId: req.params.noteId },
+      {
+        $set: {
+          noteHeader: body.noteheader,
+          noteDesc: body.notedesc,
+          noteUpdated: new Date(),
+        },
+      }
+    );
     client.close();
-    response.
+    if (response.modifiedCount > 0) {
+      res.json({
+        status: true,
+        noteId: req.params.noteId,
+      });
+      return;
+    }
     res.json({
-      status: true,
-      noteId: nid,
+      status: false,
+      noteId: "Not changed",
     });
   } catch (e) {
     client.close();
@@ -167,7 +182,7 @@ app.put("/:noteId", exjson, async (req, res) => {
     });
   }
 });
-app.delete("/:noteId", (req, res) => {
+app.delete("/:noteId", async (req, res) => {
   if (!valid(req, res)) {
     res.status(401).json({
       status: false,
@@ -175,8 +190,34 @@ app.delete("/:noteId", (req, res) => {
     });
     return;
   }
+
+  const client = new MongoClient(process.env.mongocon);
+  try {
+    client.connect();
+    const database = client.db("nodejsdemo");
+    const movies = database.collection("notedemo");
+    const response = await movies.deleteOne({ noteId: req.params.noteId });
+    client.close();
+    if (response.deletedCount > 0) {
+      res.json({
+        status: true,
+        noteId: req.params.noteId,
+      });
+      return;
+    }
+    res.json({
+      status: false,
+      message: "Record is already deleted",
+    });
+  } catch (e) {
+    client.close();
+    res.json({
+      status: false,
+      message: e.message,
+    });
+  }
 });
-app.delete("/", exjson, (req, res) => {
+app.delete("/", exjson, async (req, res) => {
   if (!valid(req, res)) {
     res.status(401).json({
       status: false,
@@ -198,6 +239,42 @@ app.delete("/", exjson, (req, res) => {
       message: "Data is empty.",
     });
     return;
+  }
+
+  const client = new MongoClient(process.env.mongocon);
+  try {
+    client.connect();
+    const database = client.db("nodejsdemo");
+    const movies = database.collection("notedemo");
+    const filter = { noteId: { $in: req.body } };
+    const response = await movies.deleteMany(filter);
+    client.close();
+    if (response.deletedCount == req.body.length) {
+      res.json({
+        status: true,
+        allNoteId: req.body,
+      });
+      return;
+    } else if (
+      response.deletedCount > 0 &&
+      response.deletedCount < req.body.length
+    ) {
+      res.json({
+        status: false,
+        message: "Delete successfully. But some record is cannot be deleted.",
+      });
+      return;
+    }
+    res.json({
+      status: false,
+      message: "Record already deleted.",
+    });
+  } catch (e) {
+    client.close();
+    res.json({
+      status: false,
+      message: e.message,
+    });
   }
 });
 

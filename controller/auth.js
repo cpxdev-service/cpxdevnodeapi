@@ -3,6 +3,7 @@ const { v4 } = require("uuid");
 const express = require("express");
 const app = Router();
 const jwt = require("jsonwebtoken");
+const os = require("os");
 
 const exjson = express.json();
 
@@ -10,6 +11,8 @@ app.post("/token", (req, res) => {
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
   let data = {
     time: Date(),
+    ip: request.socket.remoteAddress,
+    host: os.hostname(),
     userId: v4(),
   };
 

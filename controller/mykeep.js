@@ -246,7 +246,7 @@ app.delete("/", exjson, async (req, res) => {
     client.connect();
     const database = client.db("nodejsdemo");
     const movies = database.collection("notedemo");
-    const filter = { noteId: { $in: req.body } };
+    const filter = { noteId: { $in: Object.values(req.body) } };
     const response = await movies.deleteMany(filter);
     client.close();
     if (response.deletedCount == req.body.length) {

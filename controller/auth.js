@@ -31,8 +31,11 @@ app.post("/token", (req, res) => {
     access_token: token,
   });
 });
-// app.get("/:noteId", (req, res) => {
-
-// });
+app.get("/getunix", (req, res) => {
+  res.json({
+    status: true,
+    unix: Math.floor(+new Date() / 1000),
+  });
+});
 
 module.exports = app;

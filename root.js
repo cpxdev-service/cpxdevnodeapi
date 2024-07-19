@@ -35,6 +35,14 @@ app.use("/auth", Auth);
 app.use("/mynote", MyNote);
 app.use("/mykeep", MyKeep);
 
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 app.listen(process.env.PORT || process.env.PORT, () => {
   console.log("Start server at port " + process.env.PORT + ".");
 });

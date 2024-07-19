@@ -20,6 +20,7 @@ const limiter = rateLimit({
     message: "Rate limit exceeded",
   },
 });
+app.use(cors());
 app.use(limiter);
 
 app.get("/", (req, res) => {
@@ -35,21 +36,6 @@ app.post("/status", (req, res) => {
 app.use("/auth", Auth);
 app.use("/mynote", MyNote);
 app.use("/mykeep", MyKeep);
-
-const corsOpts = {
-  origin: '*',
-
-  methods: [
-    'GET',
-    'POST',
-  ],
-
-  allowedHeaders: [
-    'Content-Type',
-  ],
-};
-
-app.use(cors(corsOpts));
 
 app.listen(process.env.PORT || process.env.PORT, () => {
   console.log("Start server at port " + process.env.PORT + ".");

@@ -8,6 +8,14 @@ const { MongoClient } = require("mongodb");
 
 const exjson = express.json();
 
+function checksize(req) {
+  const size = Buffer.byteLength(JSON.stringify(req))
+  if (size > 1048576) {
+    return false;
+  }
+  return true;
+}
+
 app.get("/", async (req, res) => {
   if (!valid(req, res)) {
     res.status(401).json({
@@ -93,6 +101,13 @@ app.post("/", exjson, async (req, res) => {
     });
     return;
   }
+  if (checksize(body) == false) {
+    res.status(403).json({
+      status: false,
+      message: "Data is too large.",
+    });
+    return;
+  }
   body = JSON.parse(JSON.stringify(body).toLowerCase());
   const nid = v4();
 
@@ -142,6 +157,13 @@ app.put("/:noteId", exjson, async (req, res) => {
     res.status(403).json({
       status: false,
       message: "Data is wrong format.",
+    });
+    return;
+  }
+  if (checksize(body) == false) {
+    res.status(403).json({
+      status: false,
+      message: "Data is too large.",
     });
     return;
   }

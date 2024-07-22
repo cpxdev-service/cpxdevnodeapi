@@ -14,7 +14,7 @@ app.post("/token", exjson, async (req, res) => {
   const database = client.db("nodejsdemo");
   const movies = database.collection("authUser");
   const response = await movies.findOne(
-    { user: req.body.userName.toLowerCase() }
+    { userName: req.body.userName.toLowerCase() }
   );
   client.close();
   if (response == null) {

@@ -17,10 +17,11 @@ app.post("/token", exjson, async (req, res) => {
     { userName: req.body.userName.toLowerCase() }
   );
   client.close();
+  console.log(response, req.body.userName)
   if (response == null) {
-    res.json({
+    res.status(403).json({
       status: false,
-      message: "User is already registered",
+      message: "Access denied",
     });
     return;
   }

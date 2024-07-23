@@ -20,7 +20,7 @@ const limiter = rateLimit({
     message: "Rate limit exceeded",
   },
 });
-app.options('*', cors())
+app.use(cors());
 app.use(limiter);
 
 app.get("/", (req, res) => {

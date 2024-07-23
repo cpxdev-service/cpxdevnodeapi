@@ -6,7 +6,9 @@ const { createPool } = require("mysql2");
 const { valid } = require("../service/token");
 const { MongoClient } = require("mongodb");
 
-const exjson = express.json();
+const exjson = express.json({
+  type: ['application/json']
+});
 
 function checksize(req) {
   const size = Buffer.byteLength(JSON.stringify(req))

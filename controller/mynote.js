@@ -6,7 +6,9 @@ const { createPool } = require("mysql2");
 const { valid } = require("../service/token");
 const constr = process.env.mysqlcon;
 
-const exjson = express.json();
+const exjson = express.json({
+  type: ['application/json']
+});
 
 app.get("/", (req, res) => {
   if (!valid(req, res)) {

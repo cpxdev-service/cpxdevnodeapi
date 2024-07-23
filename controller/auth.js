@@ -7,7 +7,9 @@ const os = require("os");
 var md5 = require('md5');
 const { MongoClient } = require("mongodb");
 
-const exjson = express.json();
+const exjson = express.json({
+  type: ['application/json']
+});
 
 app.post("/token", exjson, async (req, res) => {
   const client = new MongoClient(process.env.mongocon);

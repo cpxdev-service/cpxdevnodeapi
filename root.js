@@ -33,6 +33,8 @@ app.post("/status", (req, res) => {
   });
 });
 
+app.use(express.json());
+
 app.use("/auth", Auth);
 app.use("/mynote", MyNote);
 app.use("/mykeep", MyKeep);

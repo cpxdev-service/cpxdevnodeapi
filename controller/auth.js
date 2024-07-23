@@ -60,7 +60,8 @@ app.post("/register", exjson, async (req, res) => {
     if (response != null) {
       client.close();
       res.json({
-        status: false,
+        status: true,
+        userName: req.body.userName.toLowerCase(),
         message: "User is already registered",
       });
       return;

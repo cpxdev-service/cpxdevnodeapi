@@ -10,22 +10,6 @@ const { MongoClient } = require("mongodb");
 const exjson = express.json();
 
 app.post("/token", exjson, async (req, res) => {
-  const client = new MongoClient(process.env.mongocon);
-  const database = client.db("nodejsdemo");
-  const movies = database.collection("authUser");
-  const response = await movies.findOne(
-    { userName: req.body.userName.toLowerCase() }
-  );
-  client.close();
-  console.log(response, req.body.userName)
-  if (response == null) {
-    res.status(403).json({
-      status: false,
-      message: "Access denied",
-    });
-    return;
-  }
-
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
   let checksum = {
     time: Date(),
@@ -47,41 +31,6 @@ app.post("/token", exjson, async (req, res) => {
     status: true,
     access_token: token,
   });
-});
-app.post("/register", exjson, async (req, res) => {
-  const client = new MongoClient(process.env.mongocon);
-  try {
-    client.connect();
-    const database = client.db("nodejsdemo");
-    const movies = database.collection("authUser");
-    const response = await movies.findOne(
-      { userName: req.body.userName.toLowerCase() }
-    );
-    if (response != null) {
-      client.close();
-      res.json({
-        status: true,
-        userName: req.body.userName.toLowerCase(),
-        message: "User is already registered",
-      });
-      return;
-    }
-    await movies.insertOne({
-      userName: req.body.userName.toLowerCase(),
-      userCreated: new Date()
-    });
-    client.close();
-    res.json({
-      status: true,
-      userName: req.body.userName.toLowerCase()
-    });
-  } catch (e) {
-    client.close();
-    res.json({
-      status: false,
-      message: e.message,
-    });
-  }
 });
 
 app.get("/getunix", (req, res) => {

@@ -7,6 +7,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const Auth = require("./controller/auth");
+const PromptTH = require("./controller/thaibankingslipvalid");
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 15 minutes
@@ -34,6 +35,7 @@ app.post("/status", (req, res) => {
 app.use(express.json());
 
 app.use("/auth", Auth);
+app.use("/promptpay", PromptTH);
 
 app.listen(process.env.PORT || process.env.PORT, () => {
   console.log("Start server at port " + process.env.PORT + ".");
